@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import Navbar from "../components/Navbar";
 
 function Profile() {
@@ -23,14 +23,11 @@ function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `http://localhost:5000/api/posts/user/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await API.get(`/api/posts/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setPosts(response.data.posts);
     } catch (error) {
@@ -46,7 +43,7 @@ function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("http://localhost:5000/api/auth/me", {
+      const response = await API.get("/api/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -94,8 +91,8 @@ function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+      const response = await API.put(
+        "/api/auth/profile",
         {
           name: editName,
           bio: editBio,

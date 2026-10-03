@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import Navbar from "../components/Navbar";
 
 function SearchUsers() {
@@ -26,18 +26,15 @@ function SearchUsers() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        "http://localhost:5000/api/users/search",
-        {
-          params: {
-            q: searchTerm,
-          },
-
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await API.get("/api/users/search", {
+        params: {
+          q: searchTerm,
         },
-      );
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUsers(response.data.users);
     } catch (error) {

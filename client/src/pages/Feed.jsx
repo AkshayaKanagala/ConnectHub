@@ -1,7 +1,6 @@
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import axios from "axios";
-
+import API from "../api";
 function Feed() {
   // =========================
   // STATE
@@ -34,7 +33,7 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("http://localhost:5000/api/auth/me", {
+      const response = await API.get("/api/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,14 +53,11 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `http://localhost:5000/api/comments/${postId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await API.get(`/api/comments/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setComments((previousComments) => ({
         ...previousComments,
@@ -80,7 +76,7 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("http://localhost:5000/api/posts", {
+      const response = await API.get("/api/posts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -108,8 +104,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        "http://localhost:5000/api/posts",
+      await API.post(
+        "/api/posts",
         {
           content: newPost,
         },
@@ -150,8 +146,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `http://localhost:5000/api/posts/${postId}`,
+      await API.put(
+        `/api/posts/${postId}`,
         {
           content: editPostText,
         },
@@ -179,7 +175,7 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+      await API.delete(`/api/posts/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -199,8 +195,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `http://localhost:5000/api/posts/${postId}/like`,
+      await API.put(
+        `/api/posts/${postId}/like`,
         {},
         {
           headers: {
@@ -223,8 +219,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `http://localhost:5000/api/posts/${postId}/share`,
+      await API.post(
+        `/api/posts/${postId}/share`,
         {},
         {
           headers: {
@@ -253,8 +249,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `http://localhost:5000/api/comments/${postId}`,
+      await API.post(
+        `/api/comments/${postId}`,
         {
           content: commentContent,
         },
@@ -290,8 +286,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `http://localhost:5000/api/comments/${postId}`,
+      await API.post(
+        `/api/comments/${postId}`,
         {
           content: replyContent,
           parentComment: commentId,
@@ -336,8 +332,8 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `http://localhost:5000/api/comments/${commentId}`,
+      await API.put(
+        `/api/comments/${commentId}`,
         {
           content: editCommentText,
         },
@@ -365,7 +361,7 @@ function Feed() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:5000/api/comments/${commentId}`, {
+      await API.delete(`/api/comments/${commentId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

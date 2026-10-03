@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import Navbar from "../components/Navbar";
 
 function UserProfile() {
@@ -22,7 +22,7 @@ function UserProfile() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("http://localhost:5000/api/auth/me", {
+      const response = await API.get("/api/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -42,14 +42,11 @@ function UserProfile() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `http://localhost:5000/api/users/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await API.get(`/api/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setUser(response.data.user);
     } catch (error) {
@@ -65,14 +62,11 @@ function UserProfile() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `http://localhost:5000/api/posts/user/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await API.get(`/api/posts/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setPosts(response.data.posts);
     } catch (error) {
@@ -88,8 +82,8 @@ function UserProfile() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `http://localhost:5000/api/users/${userId}/follow`,
+      await API.put(
+        `/api/users/${userId}/follow`,
         {},
         {
           headers: {
@@ -113,8 +107,8 @@ function UserProfile() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `http://localhost:5000/api/users/${userId}/unfollow`,
+      await API.put(
+        `/api/users/${userId}/unfollow`,
         {},
         {
           headers: {
