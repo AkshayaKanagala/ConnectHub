@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../api";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 
 function Login() {
   // =========================
@@ -13,6 +13,12 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, status } = useAuth();
+  const from = location.state?.from;
+  const destination = from && !["/", "/login"].includes(from.pathname)
+    ? `${from.pathname}${from.search || ""}${from.hash || ""}` : "/feed";
+  if (status === "authenticated") return <Navigate to={destination} replace />;
 
   // =========================
   // LOGIN
@@ -21,6 +27,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (isLoading) return;
     setErrorMessage("");
 
     if (!email.trim() || !password) {
@@ -31,19 +38,14 @@ function Login() {
     try {
       setIsLoading(true);
 
-      const response = await API.post("/api/auth/login", {
-        email: email,
-        password: password,
-      });
-
-      localStorage.setItem("token", response.data.token);
-
-      navigate("/feed");
+      await login(email, password);
+      navigate(destination, { replace: true });
     } catch (error) {
-      console.log("Login error:", error);
-
       setErrorMessage(
-        error.response?.data?.message || "Login failed. Please try again.",
+        error.response?.data?.message ||
+        (error.code === "ECONNABORTED" ? "The server took too long to respond. Please try again." :
+        error.request ? "Unable to reach the server. Check your connection and try again." :
+        error.message || "Login failed. Please try again."),
       );
     } finally {
       setIsLoading(false);
@@ -88,6 +90,9 @@ function Login() {
               <input
                 id="email"
                 type="email"
+                autoComplete="username"
+                required
+                disabled={isLoading || status === "checking"}
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -102,6 +107,9 @@ function Login() {
               <input
                 id="password"
                 type="password"
+                autoComplete="current-password"
+                required
+                disabled={isLoading || status === "checking"}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -110,12 +118,12 @@ function Login() {
 
             {/* ERROR */}
 
-            {errorMessage && <div className="login-error">{errorMessage}</div>}
+            {errorMessage && <div className="login-error" role="alert">{errorMessage}</div>}
 
             {/* LOGIN BUTTON */}
 
-            <button className="login-button" type="submit" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Login"}
+            <button className="login-button" type="submit" disabled={isLoading || status === "checking"}>
+              {status === "checking" ? "Checking session..." : isLoading ? "Signing in..." : "Login"}
             </button>
           </form>
 
