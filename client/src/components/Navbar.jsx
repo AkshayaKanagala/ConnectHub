@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 
 function Navbar() {
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -15,6 +17,7 @@ function Navbar() {
       </div>
 
       <div className="navbar-links">
+        <span>Signed in as {user?.name}</span>
         <button onClick={() => navigate("/feed")}>Feed</button>
 
         <button onClick={() => navigate("/search")}>Search Users</button>
